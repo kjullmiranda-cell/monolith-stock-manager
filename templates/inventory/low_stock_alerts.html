@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Alertas de Stock Mínimo - MONOLITH Stock Manager{% endblock %}
+
+{% block content %}
+<style>
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    .btn-back {
+        background: #253F69;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .alert-card {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+    th, td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+    }
+    th {
+        background: #f1f5f9;
+        color: #334155;
+    }
+    .badge-danger {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 12px;
+    }
+</style>
+
+<div class="header-actions">
+    <div>
+        <h2>Alertas de Stock Mínimo {% if company %}- {{ company.name }}{% endif %}</h2>
+        <p style="color: #64748b; margin: 0;">Produtos que atingiram ou estão abaixo do limite mínimo de segurança.</p>
+    </div>
+    <a href="{% url 'dashboard' %}" class="btn-back">← Voltar ao Dashboard</a>
+</div>
+
+<div class="alert-card">
+    <strong>Atenção:</strong> Existem <strong>{{ count }}</strong> produto(s) a necessitar de reposição urgente no armazém.
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Stock Atual</th>
+                <th>Stock Mínimo</th>
+                <th>Estado</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in low_stock_products %}
+            <tr>
+                <td><code>{{ product.sku }}</code></td>
+                <td><strong>{{ product.name }}</strong></td>
+                <td>{{ product.category.name|default:"Sem Categoria" }}</td>
+                <td style="color: #dc2626; font-weight: bold;">{{ product.quantity }} {{ product.get_unit_display }}</td>
+                <td>{{ product.min_stock }} {{ product.get_unit_display }}</td>
+                <td><span class="badge-danger">Repor Stock</span></td>
+                <td>
+                    <!-- Form Rápido para Entrada de Stock -->
+                    <form action="{% url 'record_movement' product.id %}" method="post" style="display: flex; gap: 6px; align-items: center;">
+                        {% csrf_token %}
+                        <input type="hidden" name="movement_type" value="IN">
+                        <input type="number" name="quantity" value="10" min="1" style="width: 60px; padding: 4px; border: 1px solid #ccc; border-radius: 4px;" required>
+                        <button type="submit" style="background: #16a34a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">+ Dar Entrada</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: #16a34a; padding: 24px; font-weight: bold;">
+                    ✅ Todos os produtos estão com níveis de stock adequados!
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

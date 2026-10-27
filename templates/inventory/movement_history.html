@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico de Movimentações - MONOLITH Stock Manager{% endblock %}
+
+{% block content %}
+<style>
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    .btn-back {
+        background: #253F69;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .btn-export-green {
+        background: #16a34a;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .table-container {
+        overflow-x: auto;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+    th, td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+    }
+    th {
+        background: #f1f5f9;
+        color: #334155;
+    }
+    .badge-in {
+        background: #dcfce7;
+        color: #15803d;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 12px;
+    }
+    .badge-out {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 12px;
+    }
+</style>
+
+<div class="header-actions">
+    <div>
+        <h2>Histórico de Movimentações {% if company %}- {{ company.name }}{% endif %}</h2>
+        <p style="color: #64748b; margin: 0;">Registo detalhado de todas as entradas e saídas efetuadas.</p>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <a href="{% url 'export_movements_csv' %}" class="btn-export-green">📥 Exportar Histórico</a>
+        <a href="{% url 'dashboard' %}" class="btn-back">← Voltar ao Dashboard</a>
+    </div>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Data e Hora</th>
+                <th>SKU</th>
+                <th>Produto</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>Operador / Utilizador</th>
+                <th>Motivo / Observação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movement in movements %}
+            <tr>
+                <td>{{ movement.created_at|date:"d/m/Y H:i" }}</td>
+                <td><code>{{ movement.product.sku }}</code></td>
+                <td><strong>{{ movement.product.name }}</strong></td>
+                <td>
+                    {% if movement.movement_type == 'IN' %}
+                        <span class="badge-in">+ ENTRADA</span>
+                    {% else %}
+                        <span class="badge-out">- SAÍDA</span>
+                    {% endif %}
+                </td>
+                <td><strong>{{ movement.quantity }}</strong> {{ movement.product.get_unit_display }}</td>
+                <td>{{ movement.user.username|default:"Sistema" }}</td>
+                <td>{{ movement.reason|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: #94a3b8; padding: 24px;">
+                    Nenhuma movimentação registada até ao momento.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

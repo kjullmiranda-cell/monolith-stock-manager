@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Página inicial" %} | MONOLITH Stock Manager{% endblock %}
+
+{% block content %}
+    {% if LANGUAGE_CODE == "en" %}
+        <h1>Welcome to MONOLITH Stock Manager</h1>
+        <p>Manage your company's stock and operations in one place.</p>
+    {% else %}
+        <h1>Bem-vindo ao MONOLITH Stock Manager</h1>
+        <p>Gira o stock e as operações da sua empresa num único lugar.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Entrar - MONOLITH Stock Manager{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center style="min-height: 80vh;">
+  <div class="card shadow-lg p-4" style="max-width: 420px; width: 100%; border-radius: 12px;">
+    <div class="text-center mb-4">
+      <h3 class="fw-bold text-primary">MONOLITH</h3>
+      <p class="text-muted">Stock Manager - Acesso ao Sistema</p>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      
+      <div class="mb-3">
+        <label for="id_username" class="form-label font-weight-bold">Utilizador</label>
+        <input type="text" name="username" class="form-control" id="id_username" placeholder="Introduza o seu utilizador" required autofocus>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_password" class="form-label font-weight-bold">Palavra-passe</label>
+        <input type="password" name="password" class="form-control" id="id_password" placeholder="••••••••" required>
+      </div>
+
+      <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-primary btn-block py-2 fw-bold">Entrar no Armazém</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

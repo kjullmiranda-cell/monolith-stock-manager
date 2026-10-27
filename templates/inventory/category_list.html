@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestão de Categorias - MONOLITH Stock Manager{% endblock %}
+
+{% block content %}
+<style>
+    .category-container {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+    .form-card {
+        flex: 1;
+        min-width: 280px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        height: fit-content;
+    }
+    .list-card {
+        flex: 2;
+        min-width: 300px;
+    }
+    .form-group {
+        margin-bottom: 16px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    .btn-save {
+        background: #253F69;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+    th, td {
+        padding: 10px 14px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+    }
+    th {
+        background: #f1f5f9;
+        color: #334155;
+    }
+</style>
+
+<h2>Gestão de Categorias {% if company %}- {{ company.name }}{% endif %}</h2>
+<p style="color: #64748b; margin-bottom: 24px;">Adicione e organize as categorias do armazém.</p>
+
+<div class="category-container">
+    <!-- Formulário Rápido de Adição -->
+    <div class="form-card">
+        <h3>+ Nova Categoria</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Nome da Categoria</label>
+                <input type="text" id="name" name="name" placeholder="Ex: Bebidas, Limpeza..." required>
+            </div>
+            <button type="submit" class="btn-save">Guardar Categoria</button>
+        </form>
+    </div>
+
+    <!-- Tabela de Categorias Existentes -->
+    <div class="list-card">
+        <h3>Categorias Registadas</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Produtos Associados</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td><strong>{{ category.name }}</strong></td>
+                    <td>{{ category.product_set.count }} produto(s)</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" style="text-align: center; color: #94a3b8; padding: 16px;">
+                        Nenhuma categoria registada.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
